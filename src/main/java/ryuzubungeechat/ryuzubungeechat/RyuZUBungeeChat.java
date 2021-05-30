@@ -40,6 +40,7 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
             String data = in.readUTF();
             Map<String , String> map = (Map<String, String>) jsonToMap(data);
             String name = map.get("ServerName");
+            System.out.println("堂田三鷹");
             if(!ServerGroups.containsKey(name)) {
                 return;
             }
