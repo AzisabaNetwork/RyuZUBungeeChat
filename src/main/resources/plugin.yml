@@ -1,0 +1,22 @@
+name: RyuZUBungeeChat
+version: ${project.version}
+main: ryuzubungeechat.ryuzubungeechat.RyuZUBungeeChat
+description: 複数のサーバーグループでチャットを共有するPluginです
+depend:
+  - LuckPerms
+  - LunaChat
+
+commands:
+  rbc:
+    usage:  /rbc
+    description: RyuZUBungeeChatの様々な設定ができる
+
+permissions:
+  rbc.player:
+    default: true
+  rbc.op:
+    default: op
+  rbc.*:
+    children:
+      rbc.op: true
+      rbc.player: true
