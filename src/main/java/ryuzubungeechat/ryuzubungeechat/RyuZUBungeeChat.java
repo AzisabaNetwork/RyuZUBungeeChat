@@ -30,7 +30,7 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         reloadConfig();
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerCommand(this , new ryuzubungeechat.ryuzubungeechat.Command("rbc"));
-
+        getLogger().info("Bungee版リューズは天才が起動したぞ!");
     }
 
     @EventHandler
