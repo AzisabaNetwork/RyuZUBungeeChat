@@ -35,7 +35,7 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
 
     @EventHandler
     public void onPluginMessageReceived(PluginMessageEvent event) {
-        if (event.getTag().equals("ryuzuchat")) {
+        if (event.getTag().equals("ryuzuchat:ryuzuchat")) {
             ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
             String data = in.readUTF();
             Map<String , String> map = (Map<String, String>) jsonToMap(data);
@@ -43,7 +43,7 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
             if(!ServerGroups.containsKey(name)) {
                 return;
             }
-            ServerGroups.get(name).stream().forEach(l -> sendPluginMessage(l , "ryuzuchat" , data));
+            ServerGroups.get(name).stream().forEach(l -> sendPluginMessage(l , "ryuzuchat:ryuzuchat" , data));
         }
     }
 
