@@ -30,17 +30,18 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         reloadConfig();
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerCommand(this , new ryuzubungeechat.ryuzubungeechat.Command("rbc"));
+        getProxy().registerChannel("ryuzuchat:ryuzuchat");
         getLogger().info("Bungee版リューズは天才が起動したぞ!");
     }
 
     @EventHandler
     public void onPluginMessageReceived(PluginMessageEvent event) {
+        System.out.println("堂田三鷹");
         if (event.getTag().equals("ryuzuchat:ryuzuchat")) {
             ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
             String data = in.readUTF();
             Map<String , String> map = (Map<String, String>) jsonToMap(data);
             String name = map.get("ServerName");
-            System.out.println("堂田三鷹");
             if(!ServerGroups.containsKey(name)) {
                 return;
             }
