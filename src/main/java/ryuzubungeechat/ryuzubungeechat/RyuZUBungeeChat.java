@@ -36,16 +36,15 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
 
     @EventHandler
     public void onPluginMessageReceived(PluginMessageEvent event) {
-        System.out.println("堂田三鷹");
         if (event.getTag().equals("ryuzuchat:ryuzuchat")) {
+            System.out.println("堂田三鷹");
             ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
             String data = in.readUTF();
             Map<String , String> map = (Map<String, String>) jsonToMap(data);
             String name = map.get("ServerName");
-            if(!ServerGroups.containsKey(name)) {
-                return;
-            }
-            ServerGroups.get(name).stream().forEach(l -> sendPluginMessage(l , "ryuzuchat:ryuzuchat" , data));
+            System.out.println("堂田三鷹 name " + ServerGroups.containsKey(name));
+            if(!ServerGroups.containsKey(name)) { return; }
+            ServerGroups.get(name).forEach(l -> sendPluginMessage(l , "ryuzuchat:ryuzuchat" , data));
         }
     }
 
@@ -67,7 +66,7 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         }
         if(config != null) {
             Configuration finalConfig = config;
-            config.getKeys().stream().forEach(l -> ServerGroups.put(l , finalConfig.getStringList(l)));
+            config.getKeys().forEach(l -> ServerGroups.put(l , finalConfig.getStringList(l)));
         }
     }
 
