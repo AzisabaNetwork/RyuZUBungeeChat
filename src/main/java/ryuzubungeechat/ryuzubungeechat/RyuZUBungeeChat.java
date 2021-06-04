@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
@@ -19,6 +20,7 @@ import net.md_5.bungee.event.EventHandler;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class RyuZUBungeeChat extends Plugin implements Listener {
     public static RyuZUBungeeChat RBC;
@@ -37,14 +39,21 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
     @EventHandler
     public void onPluginMessageReceived(PluginMessageEvent event) {
         if (event.getTag().equals("ryuzuchat:ryuzuchat")) {
+            String sendername = null;
+            if ( event.getSender() instanceof Server) {
+                Server receiver = (Server) event.getSender();
+                sendername = receiver.getInfo().getName();
+            }
             System.out.println("堂田三鷹");
             ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
             String data = in.readUTF();
             Map<String , String> map = (Map<String, String>) jsonToMap(data);
-            String name = map.get("ServerName");
-            System.out.println("堂田三鷹 name " + ServerGroups.containsKey(name));
-            if(!ServerGroups.containsKey(name)) { return; }
-            ServerGroups.get(name).forEach(l -> sendPluginMessage(l , "ryuzuchat:ryuzuchat" , data));
+            map.put("ServerName" , sendername);
+            List<String> reciveservers = new ArrayList<>();
+            String finalSendername = sendername;
+            ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).contains(finalSendername)).forEach(s -> reciveservers.addAll(ServerGroups.get(s).stream().filter(l -> !l.equals(finalSendername)).filter(l -> !reciveservers.contains(l)).collect(Collectors.toList())));
+            if(reciveservers.size() <= 0) { return; }
+            reciveservers.forEach(l -> sendPluginMessage(l , "ryuzuchat:ryuzuchat" , data));
         }
     }
 
