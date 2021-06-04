@@ -33,7 +33,7 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerCommand(this , new ryuzubungeechat.ryuzubungeechat.Command("rbc"));
         getProxy().registerChannel("ryuzuchat:ryuzuchat");
-        getLogger().info("Bungee版リューズは天才が起動したぞ!");
+        getLogger().info("RyuZUBungeeChatが起動しました!");
     }
 
     @EventHandler
@@ -44,7 +44,6 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
                 Server receiver = (Server) event.getSender();
                 sendername = receiver.getInfo().getName();
             }
-            System.out.println("堂田三鷹");
             ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
             String data = in.readUTF();
             Map<String , String> map = (Map<String, String>) jsonToMap(data);
