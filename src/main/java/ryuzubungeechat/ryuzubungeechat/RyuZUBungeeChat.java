@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public final class RyuZUBungeeChat extends Plugin implements Listener {
     public static RyuZUBungeeChat RBC;
-    private static HashMap<String , List<String>> ServerGroups = new HashMap<>();
+    private static HashMap<String , ChatGroups> ServerGroups = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -47,12 +47,12 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
             ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
             String data = in.readUTF();
             Map<String , String> map = (Map<String, String>) jsonToMap(data);
-            map.put("ServerName" , sendername);
-            List<String> reciveservers = new ArrayList<>();
+            map.put("SendServerName" , sendername);
+            List<ChatGroups> reciveservers = new ArrayList<>();
             String finalSendername = sendername;
-            ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).contains(finalSendername)).forEach(s -> reciveservers.addAll(ServerGroups.get(s).stream().filter(l -> !l.equals(finalSendername)).filter(l -> !reciveservers.contains(l)).collect(Collectors.toList())));
+            ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
             if(reciveservers.size() <= 0) { return; }
-            reciveservers.forEach(l -> sendPluginMessage(l , "ryuzuchat:ryuzuchat" , data));
+            reciveservers.forEach(l -> l.servers.stream().filter(s -> !s.equals(finalSendername)).forEach(s -> sendPluginMessage(s , "ryuzuchat:ryuzuchat" , setEachServersData(map , l , s))));
         }
     }
 
@@ -74,8 +74,15 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         }
         if(config != null) {
             Configuration finalConfig = config;
-            config.getKeys().forEach(l -> ServerGroups.put(l , finalConfig.getStringList(l)));
+            config.getKeys().forEach(l -> ServerGroups.put(l , new ChatGroups(finalConfig.getStringList(l + ".Servers") , finalConfig.getString(l + ".Format"))));
         }
+    }
+
+    private String setEachServersData(Map<String, String> map , ChatGroups servers , String receive) {
+        map.put("Format" , servers.format);
+        map.put("ReceiveServerName" , receive);
+        Gson gson = new Gson();
+        return gson.toJson(map);
     }
 
     private String mapToJson(Map<String, String> map) {
