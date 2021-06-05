@@ -33,7 +33,7 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().getPluginManager().registerCommand(this , new ryuzubungeechat.ryuzubungeechat.Command("rbc"));
         getProxy().registerChannel("ryuzuchat:ryuzuchat");
-        getLogger().info("RyuZUBungeeChatが起動しました!");
+        getLogger().info(ChatColor.GREEN + "RyuZUBungeeChatが起動しました");
     }
 
     @EventHandler
