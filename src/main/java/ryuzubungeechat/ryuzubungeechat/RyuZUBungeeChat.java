@@ -39,7 +39,6 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
     @EventHandler
     public void onPluginMessageReceived(PluginMessageEvent event) {
         if (event.getTag().equals("ryuzuchat:ryuzuchat")) {
-            getLogger().info("debug1");
             String sendername = null;
             if ( event.getSender() instanceof Server) {
                 Server receiver = (Server) event.getSender();
@@ -84,6 +83,13 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         ServerGroups.clear();
         Configuration config = null;
         File file = new File(getDataFolder(), "config.yml");
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try {
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
         } catch (IOException e) {
