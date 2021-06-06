@@ -39,6 +39,7 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
     @EventHandler
     public void onPluginMessageReceived(PluginMessageEvent event) {
         if (event.getTag().equals("ryuzuchat:ryuzuchat")) {
+            getLogger().info("debug1");
             String sendername = null;
             if ( event.getSender() instanceof Server) {
                 Server receiver = (Server) event.getSender();
@@ -53,8 +54,15 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
                 String finalSendername = sendername;
                 ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
                 if(reciveservers.size() <= 0) { return; }
+                reciveservers.forEach(l -> l.servers.forEach(s -> sendPluginMessage(s , "ryuzuchat:ryuzuchat" , setEachServersData(map , l , s))));
+            } else if(map.get("System").equals("Prefix")) {
+                map.put("SendServerName" , sendername);
+                List<ChatGroups> reciveservers = new ArrayList<>();
+                String finalSendername = sendername;
+                ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
+                if(reciveservers.size() <= 0) { return; }
                 reciveservers.forEach(l -> l.servers.stream().filter(s -> !s.equals(finalSendername)).forEach(s -> sendPluginMessage(s , "ryuzuchat:ryuzuchat" , setEachServersData(map , l , s))));
-            } else if(map.get("System").equals("Chat")) {
+            } else if(map.get("System").equals("Suffix")) {
                 map.put("SendServerName" , sendername);
                 List<ChatGroups> reciveservers = new ArrayList<>();
                 String finalSendername = sendername;
