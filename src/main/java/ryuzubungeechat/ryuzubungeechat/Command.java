@@ -29,12 +29,12 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
 
         if (args[0].equalsIgnoreCase("config") || args[0].equalsIgnoreCase("c")) {
             if (args.length <= 1) {
-                sender.sendMessage(ChatColor.BLUE + "/" + getName() + " config [Fromat/List]:コンフィグを編集します");
+                sender.sendMessage(ChatColor.BLUE + "/" + getName() + " config [format/List]:コンフィグを編集します");
                 return;
             }
-            if (args[1].equalsIgnoreCase("Fromat")) {
+            if (args[1].equalsIgnoreCase("format")) {
                 if (args.length <= 4) {
-                    sender.sendMessage(ChatColor.BLUE + "/" + getName() + " config Fromat [set] [GroupName] [Fromat]:Formatを編集します");
+                    sender.sendMessage(ChatColor.BLUE + "/" + getName() + " config format [set] [GroupName] [format]:Formatを編集します");
                     return;
                 }
                 if(args[2].equalsIgnoreCase("set")) {
@@ -45,7 +45,7 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
             }
             if (args[1].equalsIgnoreCase("List")) {
                 if (args.length <= 4) {
-                    sender.sendMessage(ChatColor.BLUE + "/" + getName() + " config Fromat [add/remove] [GroupName] [ServerName]:共有するServerListを編集します");
+                    sender.sendMessage(ChatColor.BLUE + "/" + getName() + " config format [add/remove] [GroupName] [ServerName]:共有するServerListを編集します");
                     return;
                 }
                 if(args[2].equalsIgnoreCase("add")) {
