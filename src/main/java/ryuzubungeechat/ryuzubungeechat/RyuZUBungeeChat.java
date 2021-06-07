@@ -69,12 +69,17 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
                 if(reciveservers.size() <= 0) { return; }
                 reciveservers.forEach(l -> l.servers.stream().filter(s -> !s.equals(finalSendername)).forEach(s -> sendPluginMessage(s , "ryuzuchat:ryuzuchat" , setEachServersData(map , l , s))));
             } else if(map.get("System").equals("EditConfig")) {
-                map.put("SendServerName" , sendername);
-                List<ChatGroups> reciveservers = new ArrayList<>();
-                String finalSendername = sendername;
-                ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
-                if(reciveservers.size() <= 0) { return; }
-                reciveservers.forEach(l -> l.servers.stream().filter(s -> !s.equals(finalSendername)).forEach(s -> sendPluginMessage(s , "ryuzuchat:ryuzuchat" , setEachServersData(map , l , s))));
+                if(map.get("EditTarget").equals("Format")) {
+                    if(map.get("EditType").equals("set")) {
+                        setFormat(map.get("Arg0") ,map.get("Arg1"));
+                    }
+                } else if(map.get("EditTarget").equals("List")) {
+                    if(map.get("EditType").equals("add")) {
+                        addServer(map.get("Arg0") ,map.get("Arg1"));
+                    } else if(map.get("EditType").equals("remove")) {
+                        removeServer(map.get("Arg0") ,map.get("Arg1"));
+                    }
+                }
             }
         }
     }
