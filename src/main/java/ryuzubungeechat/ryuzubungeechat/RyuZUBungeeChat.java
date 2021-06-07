@@ -68,6 +68,13 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
                 ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
                 if(reciveservers.size() <= 0) { return; }
                 reciveservers.forEach(l -> l.servers.stream().filter(s -> !s.equals(finalSendername)).forEach(s -> sendPluginMessage(s , "ryuzuchat:ryuzuchat" , setEachServersData(map , l , s))));
+            } else if(map.get("System").equals("EditConfig")) {
+                map.put("SendServerName" , sendername);
+                List<ChatGroups> reciveservers = new ArrayList<>();
+                String finalSendername = sendername;
+                ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
+                if(reciveservers.size() <= 0) { return; }
+                reciveservers.forEach(l -> l.servers.stream().filter(s -> !s.equals(finalSendername)).forEach(s -> sendPluginMessage(s , "ryuzuchat:ryuzuchat" , setEachServersData(map , l , s))));
             }
         }
     }
@@ -116,5 +123,84 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
     private Map<String,?> jsonToMap(String json) {
         Gson gson = new Gson();
         return gson.fromJson(json, Map.class);
+    }
+
+    public void setFormat(String GroupName , String format) {
+        Configuration config = null;
+        File file = new File(getDataFolder(), "config.yml");
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(config != null) {
+            config.set(GroupName + ".Format" , format);
+        }
+        try {
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(config , file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addServer(String GroupName , String ServerName) {
+        Configuration config = null;
+        File file = new File(getDataFolder(), "config.yml");
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(config != null) {
+            List<String> servers = new ArrayList<>(config.getStringList(GroupName + ".Servers"));
+            servers.add(ServerName);
+            config.set(GroupName + ".Servers" , servers);
+        }
+        try {
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(config , file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeServer(String GroupName , String ServerName) {
+        Configuration config = null;
+        File file = new File(getDataFolder(), "config.yml");
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(config != null) {
+            List<String> servers = new ArrayList<>(config.getStringList(GroupName + ".Servers"));
+            servers.remove(ServerName);
+            config.set(GroupName + ".Servers" , servers);
+        }
+        try {
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(config , file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
