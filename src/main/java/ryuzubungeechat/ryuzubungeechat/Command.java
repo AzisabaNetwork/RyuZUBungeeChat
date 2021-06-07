@@ -3,6 +3,10 @@ package ryuzubungeechat.ryuzubungeechat;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Command extends net.md_5.bungee.api.plugin.Command {
     public Command(String name) {
         super(name);
@@ -38,7 +42,13 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
                     return;
                 }
                 if(args[2].equalsIgnoreCase("set")) {
-                    RyuZUBungeeChat.RBC.setFormat(args[3] , args[4]);
+                    String format = "";
+                    for(int i = 0 ; i < args.length ; i++) {
+                        if(i >= 4) {
+                            format += args[i];
+                        }
+                    }
+                    RyuZUBungeeChat.RBC.setFormat(args[3] , format);
                     sender.sendMessage(ChatColor.GREEN + "Formatを編集しました");
                     return;
                 }
