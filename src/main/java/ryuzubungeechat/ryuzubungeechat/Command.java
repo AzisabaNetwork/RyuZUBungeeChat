@@ -44,8 +44,10 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
                 if(args[2].equalsIgnoreCase("set")) {
                     String format = "";
                     for(int i = 0 ; i < args.length ; i++) {
-                        if(i >= 4) {
+                        if(i == 4) {
                             format += args[i];
+                        } else if(i > 4) {
+                            format += (" " + args[i]);
                         }
                     }
                     RyuZUBungeeChat.RBC.setFormat(args[3] , format);
