@@ -79,6 +79,10 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
                     } else if(map.get("EditType").equals("remove")) {
                         removeServer(map.get("Arg0") ,map.get("Arg1"));
                     }
+                } else if(map.get("EditTarget").equals("Group")) {
+                    if(map.get("EditType").equals("remove")) {
+                        removeGroup(map.get("Arg0"));
+                    }
                 }
             }
         }
@@ -201,6 +205,31 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
             List<String> servers = new ArrayList<>(config.getStringList(GroupName + ".Servers"));
             servers.remove(ServerName);
             config.set(GroupName + ".Servers" , servers);
+        }
+        try {
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(config , file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeGroup(String GroupName) {
+        Configuration config = null;
+        File file = new File(getDataFolder(), "config.yml");
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(config != null) {
+            config.set(GroupName , null);
         }
         try {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(config , file);
