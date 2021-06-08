@@ -55,9 +55,9 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
                     return;
                 }
             }
-            if (args[1].equalsIgnoreCase("List")) {
+            if (args[1].equalsIgnoreCase("list")) {
                 if (args.length <= 4) {
-                    sender.sendMessage(ChatColor.BLUE + "/" + getName() + " config format [add/remove] [GroupName] [ServerName]:共有するServerListを編集します");
+                    sender.sendMessage(ChatColor.BLUE + "/" + getName() + " config list [add/remove] [GroupName] [ServerName]:共有するServerListを編集します");
                     return;
                 }
                 if(args[2].equalsIgnoreCase("add")) {
@@ -68,6 +68,17 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
                 if(args[2].equalsIgnoreCase("remove")) {
                     RyuZUBungeeChat.RBC.removeServer(args[3] , args[4]);
                     sender.sendMessage(ChatColor.GREEN + "Listから削除しました");
+                    return;
+                }
+            }
+            if (args[1].equalsIgnoreCase("group")) {
+                if (args.length <= 4) {
+                    sender.sendMessage(ChatColor.BLUE + "/" + getName() + " config group [remove] [GroupName]:共有するGroupを編集します");
+                    return;
+                }
+                if(args[2].equalsIgnoreCase("remove")) {
+                    RyuZUBungeeChat.RBC.removeGroup(args[3]);
+                    sender.sendMessage(ChatColor.GREEN + "Groupを削除しました");
                     return;
                 }
             }
