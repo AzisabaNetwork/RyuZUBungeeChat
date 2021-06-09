@@ -47,42 +47,38 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
             ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
             String data = in.readUTF();
             Map<String , String> map = (Map<String, String>) jsonToMap(data);
-            if(map.get("System").equals("Chat")) {
+            List<String> system = Arrays.asList("Chat" , "Prefix" , "Suffix" , "SystemMessage");
+            if(system.contains(map.get("System"))) {
                 map.put("SendServerName" , sendername);
                 List<ChatGroups> reciveservers = new ArrayList<>();
                 String finalSendername = sendername;
                 ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
                 if(reciveservers.size() <= 0) { return; }
                 reciveservers.forEach(l -> l.servers.forEach(s -> sendPluginMessage(s , "ryuzuchat:ryuzuchat" , setEachServersData(map , l , s))));
-            } else if(map.get("System").equals("Prefix")) {
-                map.put("SendServerName" , sendername);
-                List<ChatGroups> reciveservers = new ArrayList<>();
-                String finalSendername = sendername;
-                ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
-                if(reciveservers.size() <= 0) { return; }
-                reciveservers.forEach(l -> l.servers.stream().filter(s -> !s.equals(finalSendername)).forEach(s -> sendPluginMessage(s , "ryuzuchat:ryuzuchat" , setEachServersData(map , l , s))));
-            } else if(map.get("System").equals("Suffix")) {
-                map.put("SendServerName" , sendername);
-                List<ChatGroups> reciveservers = new ArrayList<>();
-                String finalSendername = sendername;
-                ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
-                if(reciveservers.size() <= 0) { return; }
-                reciveservers.forEach(l -> l.servers.stream().filter(s -> !s.equals(finalSendername)).forEach(s -> sendPluginMessage(s , "ryuzuchat:ryuzuchat" , setEachServersData(map , l , s))));
             } else if(map.get("System").equals("EditConfig")) {
-                if(map.get("EditTarget").equals("Format")) {
-                    if(map.get("EditType").equals("set")) {
-                        setFormat(map.get("Arg0") ,map.get("Arg1"));
-                    }
-                } else if(map.get("EditTarget").equals("List")) {
-                    if(map.get("EditType").equals("add")) {
-                        addServer(map.get("Arg0") ,map.get("Arg1"));
-                    } else if(map.get("EditType").equals("remove")) {
-                        removeServer(map.get("Arg0") ,map.get("Arg1"));
-                    }
-                } else if(map.get("EditTarget").equals("Group")) {
-                    if(map.get("EditType").equals("remove")) {
-                        removeGroup(map.get("Arg0"));
-                    }
+                switch (map.get("EditTarget")) {
+                    case "Format":
+                        if (map.get("EditType").equals("set")) {
+                            setFormat(map.get("Arg0"), map.get("Arg1"));
+                        }
+                        break;
+                    case "List":
+                        if (map.get("EditType").equals("add")) {
+                            addServer(map.get("Arg0"), map.get("Arg1"));
+                        } else if (map.get("EditType").equals("remove")) {
+                            removeServer(map.get("Arg0"), map.get("Arg1"));
+                        }
+                        break;
+                    case "Group":
+                        if (map.get("EditType").equals("remove")) {
+                            removeGroup(map.get("Arg0"));
+                        }
+                        break;
+                    case "ChannelFormat":
+                        if (map.get("EditType").equals("set")) {
+                            setChannelFormat(map.get("Arg0"), map.get("Arg1"));
+                        }
+                        break;
                 }
             }
         }
@@ -113,12 +109,13 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         }
         if(config != null) {
             Configuration finalConfig = config;
-            config.getKeys().forEach(l -> ServerGroups.put(l , new ChatGroups(finalConfig.getStringList(l + ".Servers") , finalConfig.getString(l + ".Format"))));
+            config.getKeys().forEach(l -> ServerGroups.put(l , new ChatGroups(finalConfig.getStringList(l + ".Servers") , finalConfig.getString(l + ".Format") , finalConfig.getString(l + ".ChannelFormat"))));
         }
     }
 
     private String setEachServersData(Map<String, String> map , ChatGroups servers , String receive) {
         map.put("Format" , servers.format);
+        map.put("ChannelFormat" , servers.channelformat);
         map.put("ReceiveServerName" , receive);
         Gson gson = new Gson();
         return gson.toJson(map);
@@ -151,6 +148,31 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         }
         if(config != null) {
             config.set(GroupName + ".Format" , format);
+        }
+        try {
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(config , file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setChannelFormat(String GroupName , String format) {
+        Configuration config = null;
+        File file = new File(getDataFolder(), "config.yml");
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(config != null) {
+            config.set(GroupName + ".ChannelFormat" , format);
         }
         try {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(config , file);
