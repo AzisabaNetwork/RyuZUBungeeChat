@@ -79,6 +79,11 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
                             setChannelFormat(map.get("Arg0"), map.get("Arg1"));
                         }
                         break;
+                    case "TellFormat":
+                        if (map.get("EditType").equals("set")) {
+                            setTellFormat(map.get("Arg0"), map.get("Arg1"));
+                        }
+                        break;
                 }
             }
         }
@@ -109,13 +114,14 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         }
         if(config != null) {
             Configuration finalConfig = config;
-            config.getKeys().forEach(l -> ServerGroups.put(l , new ChatGroups(finalConfig.getStringList(l + ".Servers") , finalConfig.getString(l + ".Format") , finalConfig.getString(l + ".ChannelFormat"))));
+            config.getKeys().forEach(l -> ServerGroups.put(l , new ChatGroups(finalConfig.getStringList(l + ".Servers") , finalConfig.getString(l + ".Format") , finalConfig.getString(l + ".ChannelFormat") , finalConfig.getString(l + ".TellFormat"))));
         }
     }
 
     private String setEachServersData(Map<String, String> map , ChatGroups servers , String receive) {
         map.put("Format" , servers.format);
-        map.put("ChannelFormat" , servers.channelformat);
+        if(servers.tellformat != null) {map.put("TellFormat" , servers.tellformat);}
+        if(servers.channelformat != null) {map.put("ChannelFormat" , servers.channelformat);}
         map.put("ReceiveServerName" , receive);
         Gson gson = new Gson();
         return gson.toJson(map);
@@ -173,6 +179,31 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         }
         if(config != null) {
             config.set(GroupName + ".ChannelFormat" , format);
+        }
+        try {
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(config , file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setTellFormat(String GroupName , String format) {
+        Configuration config = null;
+        File file = new File(getDataFolder(), "config.yml");
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(config != null) {
+            config.set(GroupName + ".TellFormat" , format);
         }
         try {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(config , file);
