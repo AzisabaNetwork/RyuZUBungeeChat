@@ -11,5 +11,6 @@ public class ChatGroups {
     public ChatGroups(List<String> servers, String format , String channelformat) {
         this.servers = servers;
         this.format = format;
+        this.channelformat = channelformat;
     }
 }

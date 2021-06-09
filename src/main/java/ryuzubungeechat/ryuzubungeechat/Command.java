@@ -16,6 +16,7 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
     public void execute(CommandSender sender, String[] args) {
         if (!sender.hasPermission("rbc.op")) {
             sender.sendMessage(ChatColor.RED + "ぽまえけんげんないやろ");
+            return;
         }
         if (args.length <= 0) {
             sender.sendMessage(ChatColor.GOLD + "------------------------使い方------------------------");
