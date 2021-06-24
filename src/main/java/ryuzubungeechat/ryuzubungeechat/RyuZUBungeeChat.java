@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public final class RyuZUBungeeChat extends Plugin implements Listener {
     public static RyuZUBungeeChat RBC;
-    private static HashMap<String , ChatGroups> ServerGroups = new HashMap<>();
+    public static HashMap<String , ChatGroups> ServerGroups = new HashMap<>();
 
     @Override
     public void onEnable() {
