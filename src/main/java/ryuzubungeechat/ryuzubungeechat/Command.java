@@ -22,6 +22,7 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
             sender.sendMessage(ChatColor.GOLD + "------------------------使い方------------------------");
             sender.sendMessage(ChatColor.BLUE + "/" + getName() + " reload :リロード");
             sender.sendMessage(ChatColor.BLUE + "/" + getName() + " group :グループの確認");
+            return;
         }
         if (args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("r")) {
             RyuZUBungeeChat.RBC.reloadConfig();

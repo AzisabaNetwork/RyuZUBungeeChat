@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
+import com.sun.org.apache.xml.internal.dtm.ref.sax2dtm.SAX2DTM2;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -92,7 +93,6 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
     private void sendPluginMessage(String server, String channel, String data) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(data);
-
         getProxy().getServerInfo(server).sendData(channel, out.toByteArray());
     }
 
