@@ -18,9 +18,13 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public final class RyuZUBungeeChat extends Plugin implements Listener {
@@ -55,7 +59,19 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
                 String finalSendername = sendername;
                 ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
                 if(reciveservers.size() <= 0) { return; }
-                reciveservers.forEach(l -> l.servers.forEach(s -> sendPluginMessage(s , "ryuzuchat:ryuzuchat" , setEachServersData(map , l , s))));
+                reciveservers.forEach(l -> {
+                    map.put("Format" , l.format);
+                    if(l.tellformat != null) {map.put("TellFormat" , l.tellformat);}
+                    if(l.channelformat != null) {
+                        map.put("ChannelFormat" , l.channelformat);
+                        if(map.get("System").equalsIgnoreCase("Chat")) { l.sendLogMessage(map); }
+                    }
+                    l.servers.forEach(s -> {
+                        map.put("ReceiveServerName" , s);
+                        Gson gson = new Gson();
+                        sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map));
+                    });
+                });
             } else if(map.get("System").equals("EditConfig")) {
                 switch (map.get("EditTarget")) {
                     case "Format":
@@ -90,9 +106,10 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         }
     }
 
-    private void sendPluginMessage(String server, String channel, String data) {
+    public void sendPluginMessage(String server, String channel, String data) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(data);
+        if(getProxy().getServerInfo(server) == null) {return;}
         getProxy().getServerInfo(server).sendData(channel, out.toByteArray());
     }
 
@@ -114,17 +131,26 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         }
         if(config != null) {
             Configuration finalConfig = config;
-            config.getKeys().forEach(l -> ServerGroups.put(l , new ChatGroups(finalConfig.getStringList(l + ".Servers") , finalConfig.getString(l + ".Format") , finalConfig.getString(l + ".ChannelFormat") , finalConfig.getString(l + ".TellFormat"))));
+            config.getKeys().forEach(l -> {
+                List<String> servers = finalConfig.getStringList(l + ".Servers");
+                String format = finalConfig.getString(l + ".Format");
+                String channelformat =  finalConfig.getString(l + ".ChannelFormat");
+                String tellformat = finalConfig.getString(l + ".TellFormat");
+                String admintoken = finalConfig.getString(l + ".Bot.Admin.Token" , null);
+                Long adminchannelid = finalConfig.getLong(l + ".Bot.Admin.ChannelID");
+                String token = finalConfig.getString(l + ".Bot.Member.Token" , null);
+                Long channelid = finalConfig.getLong(l + ".Bot.Member.ChannelID");
+                if(admintoken == null) {
+                    ServerGroups.put(l , new ChatGroups(servers , format , channelformat , tellformat));
+                } else {
+                    if(token == null) {
+                        ServerGroups.put(l , new ChatGroups(servers , format , channelformat , tellformat , new ChatLogBot(admintoken , adminchannelid)));
+                    } else {
+                        ServerGroups.put(l , new ChatGroups(servers , format , channelformat , tellformat , new ChatLogBot(admintoken , adminchannelid) , new ChatLogBot(token , channelid)));
+                    }
+                }
+            });
         }
-    }
-
-    private String setEachServersData(Map<String, String> map , ChatGroups servers , String receive) {
-        map.put("Format" , servers.format);
-        if(servers.tellformat != null) {map.put("TellFormat" , servers.tellformat);}
-        if(servers.channelformat != null) {map.put("ChannelFormat" , servers.channelformat);}
-        map.put("ReceiveServerName" , receive);
-        Gson gson = new Gson();
-        return gson.toJson(map);
     }
 
     private String mapToJson(Map<String, String> map) {
