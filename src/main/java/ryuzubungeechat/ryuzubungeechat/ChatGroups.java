@@ -32,7 +32,6 @@ public class ChatGroups {
         this.tellformat = tellformat;
         this.adminbot = adminbot;
 
-        adminbot.gateway
         adminbot.gateway.on(MessageCreateEvent.class).subscribe(event -> {
             if(adminbot.channel.getId().asLong() != event.getMessage().getChannelId().asLong() || event.getMessage().getAuthor().get().isBot()) {return;}
             MessageChannel channel1 = event.getMessage().getChannel().block();
