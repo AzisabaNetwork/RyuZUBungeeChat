@@ -2,6 +2,7 @@ package ryuzubungeechat.ryuzubungeechat;
 
 import com.google.gson.Gson;
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.event.domain.message.MessageDeleteEvent;
 import discord4j.core.object.entity.channel.MessageChannel;
 
 import java.util.ArrayList;
@@ -30,6 +31,8 @@ public class ChatGroups {
         this.channelformat = channelformat;
         this.tellformat = tellformat;
         this.adminbot = adminbot;
+
+        adminbot.gateway
         adminbot.gateway.on(MessageCreateEvent.class).subscribe(event -> {
             if(adminbot.channel.getId().asLong() != event.getMessage().getChannelId().asLong() || event.getMessage().getAuthor().get().isBot()) {return;}
             MessageChannel channel1 = event.getMessage().getChannel().block();

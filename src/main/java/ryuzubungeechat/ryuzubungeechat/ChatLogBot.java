@@ -38,7 +38,7 @@ public class ChatLogBot {
             msg = "(" + map.get("SendServerName") + ")" +  " --> " + msg + " --> " +
                     map.getOrDefault("ReceivedPlayerLuckPermsPrefix", "") +
                     map.getOrDefault("ReceivedPlayerRyuZUMapPrefix", "") +
-                    (map.getOrDefault("ReceivedPlayerDisplayName", map.getOrDefault("ReceivedPlayerName", ""))) +
+                    map.getOrDefault("ReceivedPlayerName", "") +
                     map.getOrDefault("ReceivedPlayerLuckPermsSuffix", "") +
                     map.getOrDefault("ReceivedPlayerRyuZUMapSuffix", "") +
                     " --> " + "(" +  map.get("ReceiveServerName") + ")";
@@ -46,7 +46,7 @@ public class ChatLogBot {
             msg = "(" + map.get("SendServerName") + ")" + "[" + map.get("ChannelName") + "]" +  " --> " + msg;
         }
 
-        channel.createMessage(msg).block();
+        channel.createMessage(ChatColor.stripColor(msg)).block();
     }
 
     private String setFormat(Map<String , String> map) {
@@ -56,7 +56,7 @@ public class ChatLogBot {
                 .replace("[RyuZUMapPrefix]", map.getOrDefault("RyuZUMapPrefix", ""))
                 .replace("[SendServerName]", map.getOrDefault("SendServerName", ""))
                 .replace("[ReceiveServerName]", map.getOrDefault("ReceiveServerName", ""))
-                .replace("[PlayerName]", (map.getOrDefault("PlayerDisplayName", map.getOrDefault("PlayerName", ""))))
+                .replace("[PlayerName]", map.getOrDefault("PlayerName", ""))
                 .replace("[RyuZUMapSuffix]", map.getOrDefault("RyuZUMapSuffix", ""))
                 .replace("[LunaChatSuffix]", map.getOrDefault("LunaChatSuffix", ""))
                 .replace("[LuckPermsSuffix]", map.getOrDefault("LuckPermsSuffix", ""));
