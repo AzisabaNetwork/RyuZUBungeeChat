@@ -43,7 +43,6 @@ public class ChatGroups {
                 map.put("Message" , event.getMessage().getContent());
                 map.put("Discord" , event.getMessage().getAuthor().get().getUsername());
                 servers.forEach(s -> RyuZUBungeeChat.RBC.sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map)));
-                event.getMessage().getAuthor().get().getId();
             }
         });
     }
@@ -66,7 +65,6 @@ public class ChatGroups {
                 map.put("Message" , event.getMessage().getContent());
                 map.put("Discord" , event.getMessage().getAuthor().get().getUsername());
                 servers.forEach(s -> RyuZUBungeeChat.RBC.sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map)));
-                event.getMessage().getAuthor().get().getId();
             }
         });
         memberbot.gateway.on(MessageCreateEvent.class).subscribe(event -> {
@@ -80,7 +78,7 @@ public class ChatGroups {
                 map.put("Message" , event.getMessage().getContent());
                 map.put("Discord" , event.getMessage().getAuthor().get().getUsername());
                 servers.forEach(s -> RyuZUBungeeChat.RBC.sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map)));
-                event.getMessage().getAuthor().get().getId();
+                adminbot.sendLogMessage(map , ChatLogBot.SendType.Discord);
             }
         });
     }

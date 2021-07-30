@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ChatLogBot {
-    public enum SendType{Global,Channel,Private}
+    public enum SendType{Global,Channel,Private,Discord}
     public GatewayDiscordClient gateway;
     public MessageChannel channel;
 
@@ -42,11 +42,13 @@ public class ChatLogBot {
                     map.getOrDefault("ReceivedPlayerLuckPermsSuffix", "") +
                     map.getOrDefault("ReceivedPlayerRyuZUMapSuffix", "") +
                     " --> " + "(" +  map.get("ReceiveServerName") + ")";
-        } else {
+        } else if(type.equals(SendType.Channel)) {
             msg = "(" + map.get("SendServerName") + ")" + "[" + map.get("ChannelName") + "]" +  " --> " + msg;
+        } else if(type.equals(SendType.Discord)) {
+            msg = "[" + "Discord" + "]"  + map.get("Discord") + " " + map.get("Message");
         }
 
-        channel.createMessage(ChatColor.stripColor(msg)).block();
+        channel.createMessage(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&' , msg))).block();
     }
 
     private String setFormat(Map<String , String> map) {
@@ -62,15 +64,14 @@ public class ChatLogBot {
                 .replace("[LuckPermsSuffix]", map.getOrDefault("LuckPermsSuffix", ""));
         msg = setColor(msg);
         msg = msg.replace("[PreReplaceMessage]", (Boolean.parseBoolean(map.get("CanJapanese")) ? "(" + map.get("PreReplaceMessage") + ")" : ""))
-                .replace("[Message]", map.getOrDefault("Message", ""))
-                .replace("§" , "");
+                .replace("[Message]", map.getOrDefault("Message", ""));
         return msg;
     }
 
     private String setColor(String msg) {
         String replaced = msg;
         replaced = replaceToHexFromRGB(replaced);
-        return ChatColor.stripColor(replaced);
+        return replaced;
     }
 
     private String replaceToHexFromRGB(String text) {
