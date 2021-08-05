@@ -6,6 +6,8 @@ import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.sun.org.apache.xml.internal.dtm.ref.sax2dtm.SAX2DTM2;
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import me.leoko.advancedban.manager.PunishmentManager;
+import me.leoko.advancedban.manager.UUIDManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -44,66 +46,71 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
 
     @EventHandler
     public void onPluginMessageReceived(PluginMessageEvent event) {
-        if (event.getTag().equals("ryuzuchat:ryuzuchat")) {
-            String sendername = null;
-            if ( event.getSender() instanceof Server) {
-                Server receiver = (Server) event.getSender();
-                sendername = receiver.getInfo().getName();
-            }
-            ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
-            String data = in.readUTF();
-            Map<String , String> map = (Map<String, String>) jsonToMap(data);
-            List<String> system = Arrays.asList("Chat" , "Prefix" , "Suffix" , "SystemMessage");
-            if(system.contains(map.get("System"))) {
-                map.put("SendServerName" , sendername);
-                List<ChatGroups> reciveservers = new ArrayList<>();
-                String finalSendername = sendername;
-                ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
-                if(reciveservers.size() <= 0) { return; }
-                reciveservers.forEach(l -> {
-                    map.put("Format" , l.format);
-                    if(l.tellformat != null) {map.put("TellFormat" , l.tellformat);}
-                    if(l.channelformat != null) {
-                        map.put("ChannelFormat" , l.channelformat);
+        try {
+            if (event.getTag().equals("ryuzuchat:ryuzuchat")) {
+                String sendername = null;
+                if ( event.getSender() instanceof Server) {
+                    Server receiver = (Server) event.getSender();
+                    sendername = receiver.getInfo().getName();
+                }
+                ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
+                String data = in.readUTF();
+                Map<String , String> map = (Map<String, String>) jsonToMap(data);
+                List<String> system = Arrays.asList("Chat" , "Prefix" , "Suffix" , "SystemMessage");
+                if(system.contains(map.get("System"))) {
+                    if(map.containsKey("PlayerName") && PunishmentManager.get().isMuted(UUIDManager.get().getUUID(map.get("PlayerName")))) {return;}
+                    map.put("SendServerName" , sendername);
+                    List<ChatGroups> reciveservers = new ArrayList<>();
+                    String finalSendername = sendername;
+                    ServerGroups.keySet().stream().filter(s -> ServerGroups.get(s).servers.contains(finalSendername)).forEach(s -> reciveservers.add(ServerGroups.get(s)));
+                    if(reciveservers.size() <= 0) { return; }
+                    reciveservers.forEach(l -> {
+                        map.put("Format" , l.format);
+                        if(l.tellformat != null) {map.put("TellFormat" , l.tellformat);}
+                        if(l.channelformat != null) {
+                            map.put("ChannelFormat" , l.channelformat);
+                        }
+                        l.servers.forEach(s -> {
+                            map.put("ReceiveServerName" , s);
+                            Gson gson = new Gson();
+                            sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map));
+                        });
                         if(map.get("System").equalsIgnoreCase("Chat")) { l.sendLogMessage(map); }
-                    }
-                    l.servers.forEach(s -> {
-                        map.put("ReceiveServerName" , s);
-                        Gson gson = new Gson();
-                        sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map));
                     });
-                });
-            } else if(map.get("System").equals("EditConfig")) {
-                switch (map.get("EditTarget")) {
-                    case "Format":
-                        if (map.get("EditType").equals("set")) {
-                            setFormat(map.get("Arg0"), map.get("Arg1"));
-                        }
-                        break;
-                    case "List":
-                        if (map.get("EditType").equals("add")) {
-                            addServer(map.get("Arg0"), map.get("Arg1"));
-                        } else if (map.get("EditType").equals("remove")) {
-                            removeServer(map.get("Arg0"), map.get("Arg1"));
-                        }
-                        break;
-                    case "Group":
-                        if (map.get("EditType").equals("remove")) {
-                            removeGroup(map.get("Arg0"));
-                        }
-                        break;
-                    case "ChannelFormat":
-                        if (map.get("EditType").equals("set")) {
-                            setChannelFormat(map.get("Arg0"), map.get("Arg1"));
-                        }
-                        break;
-                    case "TellFormat":
-                        if (map.get("EditType").equals("set")) {
-                            setTellFormat(map.get("Arg0"), map.get("Arg1"));
-                        }
-                        break;
+                } else if(map.get("System").equals("EditConfig")) {
+                    switch (map.get("EditTarget")) {
+                        case "Format":
+                            if (map.get("EditType").equals("set")) {
+                                setFormat(map.get("Arg0"), map.get("Arg1"));
+                            }
+                            break;
+                        case "List":
+                            if (map.get("EditType").equals("add")) {
+                                addServer(map.get("Arg0"), map.get("Arg1"));
+                            } else if (map.get("EditType").equals("remove")) {
+                                removeServer(map.get("Arg0"), map.get("Arg1"));
+                            }
+                            break;
+                        case "Group":
+                            if (map.get("EditType").equals("remove")) {
+                                removeGroup(map.get("Arg0"));
+                            }
+                            break;
+                        case "ChannelFormat":
+                            if (map.get("EditType").equals("set")) {
+                                setChannelFormat(map.get("Arg0"), map.get("Arg1"));
+                            }
+                            break;
+                        case "TellFormat":
+                            if (map.get("EditType").equals("set")) {
+                                setTellFormat(map.get("Arg0"), map.get("Arg1"));
+                            }
+                            break;
+                    }
                 }
             }
+        } catch (Exception i) {
+            i.printStackTrace();
         }
     }
 

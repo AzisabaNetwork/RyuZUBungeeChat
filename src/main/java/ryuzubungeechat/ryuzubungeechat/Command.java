@@ -30,7 +30,7 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
         }
         if (args[0].equalsIgnoreCase("group") || args[0].equalsIgnoreCase("g")) {
             if (args.length <= 1) {
-                sender.sendMessage(ChatColor.RED + "/" + getName() + " group [GroupName/List/C]");
+                sender.sendMessage(ChatColor.RED + "/" + getName() + " group [GroupName/List]");
                 return;
             }
             if (args[1].equalsIgnoreCase("list")) {
@@ -41,19 +41,23 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
                 return;
             }
             if(RyuZUBungeeChat.ServerGroups.containsKey(args[1])) {
+                if (args.length <= 2) {
+                    sender.sendMessage(ChatColor.RED + "/" + getName() + " group " + args[1] + " [List/Token/ChannelID]");
+                    return;
+                }
                 if(args[2].equalsIgnoreCase("list")) {
                     sender.sendMessage(ChatColor.GREEN + args[1] + "に登録されてるサーバー一覧");
                     for(String name : RyuZUBungeeChat.ServerGroups.get(args[1]).servers) {
                         sender.sendMessage(name);
                     }
                 } else if(args[2].equalsIgnoreCase("AdminChannelID")) {
-                    sender.sendMessage(RyuZUBungeeChat.ServerGroups.get(args[1]).adminbot.channel.getId().asString());
+                    sender.sendMessage(String.valueOf(RyuZUBungeeChat.ServerGroups.get(args[1]).adminbot.channel.getId().asLong()));
                 } else if(args[2].equalsIgnoreCase("AdminToken")) {
-                    sender.sendMessage(String.valueOf(RyuZUBungeeChat.ServerGroups.get(args[1]).adminbot.channel.getClient().getSelfId().asLong()));
+                    sender.sendMessage(RyuZUBungeeChat.ServerGroups.get(args[1]).adminbot.channel.getClient().getSelfId().asString());
                 } else if(args[2].equalsIgnoreCase("MemberChannelID")) {
-                    sender.sendMessage(RyuZUBungeeChat.ServerGroups.get(args[1]).memberbot.channel.getId().asString());
+                    sender.sendMessage(String.valueOf(RyuZUBungeeChat.ServerGroups.get(args[1]).memberbot.channel.getId().asLong()));
                 } else if(args[2].equalsIgnoreCase("MemberToken")) {
-                    sender.sendMessage(String.valueOf(RyuZUBungeeChat.ServerGroups.get(args[1]).memberbot.channel.getClient().getSelfId().asLong()));
+                    sender.sendMessage(RyuZUBungeeChat.ServerGroups.get(args[1]).memberbot.channel.getClient().getSelfId().asString());
                 }
             } else {
                 sender.sendMessage(ChatColor.RED + "グループが存在しません");
