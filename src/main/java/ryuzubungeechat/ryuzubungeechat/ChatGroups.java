@@ -63,6 +63,7 @@ public class ChatGroups {
         }
         if(map.containsKey("ChannelName")) {
             adminbot.sendLogMessage(map , ChatLogBot.SendType.Channel);
+            ChannelBots.stream().filter(bot -> bot.channelname.equalsIgnoreCase(map.get("ChannelName"))).forEach(bot -> bot.sendLogMessage(map , ChatLogBot.SendType.Channel));
             return;
         }
         adminbot.sendLogMessage(map , ChatLogBot.SendType.Global);
