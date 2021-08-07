@@ -30,6 +30,7 @@ public class ChannelBot extends ChatLogBot {
                 map.put("Message" , event.getMessage().getContent());
                 map.put("Discord" , event.getMessage().getAuthor().get().getUsername());
                 RyuZUBungeeChat.ServerGroups.get(GroupName).servers.forEach(s -> RyuZUBungeeChat.RBC.sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map)));
+                RyuZUBungeeChat.ServerGroups.get(GroupName).adminbot.sendLogMessage(map , SendType.DiscordChannel);
             }
         });
     }

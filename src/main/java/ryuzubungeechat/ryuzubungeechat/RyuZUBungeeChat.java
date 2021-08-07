@@ -125,6 +125,7 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         ServerGroups.values().stream().forEach(group -> {
             if(group.memberbot != null) group.memberbot.MessageEvent.dispose();
             if(group.adminbot != null) group.adminbot.MessageEvent.dispose();
+            group.ChannelBots.forEach(bot -> bot.MessageEvent.dispose());
         });
         ServerGroups.clear();
         Configuration config = null;

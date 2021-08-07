@@ -46,13 +46,7 @@ public class ChatLogBot {
                 map.put("Message" , event.getMessage().getContent());
                 map.put("Discord" , event.getMessage().getAuthor().get().getUsername());
                 RyuZUBungeeChat.ServerGroups.get(GroupName).servers.forEach(s -> RyuZUBungeeChat.RBC.sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map)));
-                if(!type.equals(BotType.Admin)) {
-                    if(type.equals(BotType.Member)) {
-                        RyuZUBungeeChat.ServerGroups.get(GroupName).adminbot.sendLogMessage(map , SendType.Discord);
-                    } else if(!type.equals(BotType.Channel)) {
-                        RyuZUBungeeChat.ServerGroups.get(GroupName).adminbot.sendLogMessage(map , SendType.DiscordChannel);
-                    }
-                }
+                if(type.equals(BotType.Member)) { RyuZUBungeeChat.ServerGroups.get(GroupName).adminbot.sendLogMessage(map , SendType.Discord); }
             }
         });
     }
