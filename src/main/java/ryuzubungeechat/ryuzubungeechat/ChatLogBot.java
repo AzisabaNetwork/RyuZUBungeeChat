@@ -52,10 +52,12 @@ public class ChatLogBot {
     }
 
     public void sendLogMessage(Map<String , String> map , SendType type) {
-        String msg = setFormat(map);
+        String msg = null;
         if(type.equals(SendType.Global)) {
+            msg = setFormat(map);
             msg = "(" + map.get("SendServerName") + ")" +  " --> " + msg;
         } else if(type.equals(SendType.Private)) {
+            msg = setFormat(map);
             msg = "(" + map.get("SendServerName") + ")" +  " --> " + msg + " --> " +
                     map.getOrDefault("ReceivedPlayerLuckPermsPrefix", "") +
                     map.getOrDefault("ReceivedPlayerRyuZUMapPrefix", "") +
@@ -64,6 +66,7 @@ public class ChatLogBot {
                     map.getOrDefault("ReceivedPlayerRyuZUMapSuffix", "") +
                     " --> " + "(" +  map.get("ReceiveServerName") + ")";
         } else if(type.equals(SendType.Channel)) {
+            msg = setFormat(map);
             msg = "(" + map.get("SendServerName") + ")" + "[" + map.get("ChannelName") + "]" +  " --> " + msg;
         } else if(type.equals(SendType.Discord)) {
             msg = "[" + "Discord" + "]"  + map.get("Discord") + " " + map.get("Message");
