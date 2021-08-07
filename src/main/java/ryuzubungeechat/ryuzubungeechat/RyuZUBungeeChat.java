@@ -122,6 +122,10 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
     }
 
     public void reloadConfig() {
+        ServerGroups.values().stream().forEach(group -> {
+            if(group.memberbot != null) group.memberbot.MessageEvent.dispose();
+            if(group.adminbot != null) group.adminbot.MessageEvent.dispose();
+        });
         ServerGroups.clear();
         Configuration config = null;
         File file = new File(getDataFolder(), "config.yml");
@@ -148,13 +152,25 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
                 Long adminchannelid = finalConfig.getLong(l + ".Bot.Admin.ChannelID");
                 String token = finalConfig.getString(l + ".Bot.Member.Token" , null);
                 Long channelid = finalConfig.getLong(l + ".Bot.Member.ChannelID");
+                List<ChannelBot> channelbots = new ArrayList<>();
+                for (String data : finalConfig.getSection(l + ".Bot.Channel").getKeys()) {
+                    String channeltoken = finalConfig.getString(l + ".Bot.Channel." + data +  ".Token");
+                    Long channelchannelid = finalConfig.getLong(l + ".Bot.Channel." + data +  ".ChannelID");
+                    channelbots.add(new ChannelBot(channeltoken , channelchannelid , l , data));
+                }
                 if(admintoken == null) {
                     ServerGroups.put(l , new ChatGroups(servers , format , channelformat , tellformat));
                 } else {
+                    ChatLogBot adminbot = new ChatLogBot(admintoken , adminchannelid , l , ChatLogBot.BotType.Admin);
                     if(token == null) {
-                        ServerGroups.put(l , new ChatGroups(servers , format , channelformat , tellformat , new ChatLogBot(admintoken , adminchannelid)));
+                        ServerGroups.put(l , new ChatGroups(servers , format , channelformat , tellformat , adminbot));
                     } else {
-                        ServerGroups.put(l , new ChatGroups(servers , format , channelformat , tellformat , new ChatLogBot(admintoken , adminchannelid) , new ChatLogBot(token , channelid)));
+                        ChatLogBot memberbot = new ChatLogBot(token , channelid , l , ChatLogBot.BotType.Member);
+                        if(channelbots.size() == 0) {
+                            ServerGroups.put(l , new ChatGroups(servers , format , channelformat , tellformat , adminbot , memberbot));
+                        } else {
+                            ServerGroups.put(l , new ChatGroups(servers , format , channelformat , tellformat , adminbot , memberbot , channelbots));
+                        }
                     }
                 }
             });

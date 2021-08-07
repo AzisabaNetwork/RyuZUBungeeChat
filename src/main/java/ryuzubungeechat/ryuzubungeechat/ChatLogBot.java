@@ -9,9 +9,11 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.MessageChannel;
 import net.md_5.bungee.api.ChatColor;
+import reactor.core.Disposable;
 import reactor.util.annotation.NonNull;
 
 import java.awt.*;
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,14 +22,39 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ChatLogBot {
-    public enum SendType{Global,Channel,Private,Discord}
+    public enum BotType{Admin,Member,Channel}
+    public enum SendType{Global,Channel,Private,Discord,DiscordChannel}
     public GatewayDiscordClient gateway;
     public MessageChannel channel;
+    public Disposable MessageEvent;
+    public String GroupName;
 
-    public ChatLogBot(@NonNull String token , @NonNull Long channnel) {
+    public ChatLogBot(@NonNull String token , @NonNull Long channnel , @NonNull String GroupName , BotType type) {
         DiscordClient client = DiscordClient.create(token);
         gateway = client.login().block();
-        channel = (MessageChannel) gateway.getChannelById(Snowflake.of(channnel)).block();;
+        channel = (MessageChannel) gateway.getChannelById(Snowflake.of(channnel)).block();
+        this.GroupName = GroupName;
+
+        MessageEvent = gateway.on(MessageCreateEvent.class).subscribe(event -> {
+            if(channel.getId().asLong() != event.getMessage().getChannelId().asLong() || event.getMessage().getAuthor().get().isBot()) {return;}
+            MessageChannel channel1 = event.getMessage().getChannel().block();
+            if(channel1 == null) {return;}
+            if (channel1.equals(channel)) {
+                Map<String , String> map = new HashMap<>();
+                Gson gson = new Gson();
+                map.put("System" , "Chat");
+                map.put("Message" , event.getMessage().getContent());
+                map.put("Discord" , event.getMessage().getAuthor().get().getUsername());
+                RyuZUBungeeChat.ServerGroups.get(GroupName).servers.forEach(s -> RyuZUBungeeChat.RBC.sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map)));
+                if(!type.equals(BotType.Admin)) {
+                    if(type.equals(BotType.Member)) {
+                        RyuZUBungeeChat.ServerGroups.get(GroupName).adminbot.sendLogMessage(map , SendType.Discord);
+                    } else if(!type.equals(BotType.Channel)) {
+                        RyuZUBungeeChat.ServerGroups.get(GroupName).adminbot.sendLogMessage(map , SendType.DiscordChannel);
+                    }
+                }
+            }
+        });
     }
 
     public void sendLogMessage(Map<String , String> map , SendType type) {
@@ -46,6 +73,8 @@ public class ChatLogBot {
             msg = "(" + map.get("SendServerName") + ")" + "[" + map.get("ChannelName") + "]" +  " --> " + msg;
         } else if(type.equals(SendType.Discord)) {
             msg = "[" + "Discord" + "]"  + map.get("Discord") + " " + map.get("Message");
+        } else if(type.equals(SendType.DiscordChannel)) {
+            msg = "[" + "Discord" + "]" + "(" + map.get("ChannelName") + ")" + map.get("Discord") + " " + map.get("Message");
         }
 
         channel.createMessage(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&' , msg))).block();

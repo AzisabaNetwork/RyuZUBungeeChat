@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.event.domain.message.MessageDeleteEvent;
 import discord4j.core.object.entity.channel.MessageChannel;
+import reactor.core.Disposable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class ChatGroups {
     public String tellformat;
     public ChatLogBot adminbot;
     public ChatLogBot memberbot;
+    public List<ChannelBot> ChannelBots = new ArrayList<>();
 
     public ChatGroups(List<String> servers, String format , String channelformat , String tellformat) {
         this.servers = servers;
@@ -31,20 +33,6 @@ public class ChatGroups {
         this.channelformat = channelformat;
         this.tellformat = tellformat;
         this.adminbot = adminbot;
-
-        adminbot.gateway.on(MessageCreateEvent.class).subscribe(event -> {
-            if(adminbot.channel.getId().asLong() != event.getMessage().getChannelId().asLong() || event.getMessage().getAuthor().get().isBot()) {return;}
-            MessageChannel channel1 = event.getMessage().getChannel().block();
-            if(channel1 == null) {return;}
-            if (channel1.equals(adminbot.channel)) {
-                Map<String , String> map = new HashMap<>();
-                Gson gson = new Gson();
-                map.put("System" , "Chat");
-                map.put("Message" , event.getMessage().getContent());
-                map.put("Discord" , event.getMessage().getAuthor().get().getUsername());
-                servers.forEach(s -> RyuZUBungeeChat.RBC.sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map)));
-            }
-        });
     }
 
     public ChatGroups(List<String> servers, String format , String channelformat , String tellformat , ChatLogBot adminbot , ChatLogBot memberbot) {
@@ -54,33 +42,16 @@ public class ChatGroups {
         this.tellformat = tellformat;
         this.adminbot = adminbot;
         this.memberbot = memberbot;
-        adminbot.gateway.on(MessageCreateEvent.class).subscribe(event -> {
-            if(adminbot.channel.getId().asLong() != event.getMessage().getChannelId().asLong() || event.getMessage().getAuthor().get().isBot()) {return;}
-            MessageChannel channel1 = event.getMessage().getChannel().block();
-            if(channel1 == null) {return;}
-            if (channel1.equals(adminbot.channel)) {
-                Map<String , String> map = new HashMap<>();
-                Gson gson = new Gson();
-                map.put("System" , "Chat");
-                map.put("Message" , event.getMessage().getContent());
-                map.put("Discord" , event.getMessage().getAuthor().get().getUsername());
-                servers.forEach(s -> RyuZUBungeeChat.RBC.sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map)));
-            }
-        });
-        memberbot.gateway.on(MessageCreateEvent.class).subscribe(event -> {
-            if(memberbot.channel.getId().asLong() != event.getMessage().getChannelId().asLong() || event.getMessage().getAuthor().get().isBot()) {return;}
-            MessageChannel channel1 = event.getMessage().getChannel().block();
-            if(channel1 == null) {return;}
-            if (channel1.equals(memberbot.channel)) {
-                Map<String , String> map = new HashMap<>();
-                Gson gson = new Gson();
-                map.put("System" , "Chat");
-                map.put("Message" , event.getMessage().getContent());
-                map.put("Discord" , event.getMessage().getAuthor().get().getUsername());
-                servers.forEach(s -> RyuZUBungeeChat.RBC.sendPluginMessage(s , "ryuzuchat:ryuzuchat" , gson.toJson(map)));
-                adminbot.sendLogMessage(map , ChatLogBot.SendType.Discord);
-            }
-        });
+    }
+
+    public ChatGroups(List<String> servers, String format , String channelformat , String tellformat , ChatLogBot adminbot , ChatLogBot memberbot , List<ChannelBot> channelbots) {
+        this.servers = servers;
+        this.format = format;
+        this.channelformat = channelformat;
+        this.tellformat = tellformat;
+        this.adminbot = adminbot;
+        this.memberbot = memberbot;
+        this.ChannelBots = channelbots;
     }
 
     public void sendLogMessage(Map<String , String> map) {
