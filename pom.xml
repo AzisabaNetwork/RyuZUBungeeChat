@@ -97,12 +97,5 @@
             <artifactId>discord4j-core</artifactId>
             <version>3.1.7</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.DevLeoko</groupId>
-            <artifactId>AdvancedBan</artifactId>
-            <version>2.3.0</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 </project>

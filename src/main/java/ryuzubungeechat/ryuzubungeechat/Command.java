@@ -42,7 +42,7 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
             }
             if(RyuZUBungeeChat.ServerGroups.containsKey(args[1])) {
                 if (args.length <= 2) {
-                    sender.sendMessage(ChatColor.RED + "/" + getName() + " group " + args[1] + " [List/Token/ChannelID]");
+                    sender.sendMessage(ChatColor.RED + "/" + getName() + " group " + args[1] + " [List/AdminToken/AdminChannelID/MemberToken/MemberChannelID/ChannelToken/ChannelChannelID]");
                     return;
                 }
                 if(args[2].equalsIgnoreCase("list")) {
@@ -51,13 +51,55 @@ public class Command extends net.md_5.bungee.api.plugin.Command {
                         sender.sendMessage(name);
                     }
                 } else if(args[2].equalsIgnoreCase("AdminChannelID")) {
-                    sender.sendMessage(String.valueOf(RyuZUBungeeChat.ServerGroups.get(args[1]).adminbot.channel.getId().asLong()));
+                    ChatLogBot bot = RyuZUBungeeChat.ServerGroups.get(args[1]).adminbot;
+                    if(bot == null) {
+                        sender.sendMessage(ChatColor.RED + "Botが存在しません");
+                        return;
+                    }
+                    sender.sendMessage(String.valueOf(bot.channel.getId().asLong()));
                 } else if(args[2].equalsIgnoreCase("AdminToken")) {
-                    sender.sendMessage(RyuZUBungeeChat.ServerGroups.get(args[1]).adminbot.channel.getClient().getSelfId().asString());
+                    ChatLogBot bot = RyuZUBungeeChat.ServerGroups.get(args[1]).adminbot;
+                    if(bot == null) {
+                        sender.sendMessage(ChatColor.RED + "Botが存在しません");
+                        return;
+                    }
+                    sender.sendMessage(bot.channel.getClient().getSelfId().asString());
                 } else if(args[2].equalsIgnoreCase("MemberChannelID")) {
-                    sender.sendMessage(String.valueOf(RyuZUBungeeChat.ServerGroups.get(args[1]).memberbot.channel.getId().asLong()));
+                    ChatLogBot bot = RyuZUBungeeChat.ServerGroups.get(args[1]).memberbot;
+                    if(bot == null) {
+                        sender.sendMessage(ChatColor.RED + "Botが存在しません");
+                        return;
+                    }
+                    sender.sendMessage(String.valueOf(bot.channel.getId().asLong()));
                 } else if(args[2].equalsIgnoreCase("MemberToken")) {
-                    sender.sendMessage(RyuZUBungeeChat.ServerGroups.get(args[1]).memberbot.channel.getClient().getSelfId().asString());
+                    ChatLogBot bot = RyuZUBungeeChat.ServerGroups.get(args[1]).memberbot;
+                    if(bot == null) {
+                        sender.sendMessage(ChatColor.RED + "Botが存在しません");
+                        return;
+                    }
+                    sender.sendMessage(bot.channel.getClient().getSelfId().asString());
+                } else if(args[2].equalsIgnoreCase("ChannelToken")) {
+                    if (args.length <= 3) {
+                        sender.sendMessage(ChatColor.RED + "/" + getName() + " group " + args[1] + " ChannelToken [ChannelName]");
+                        return;
+                    }
+                    ChatLogBot bot = RyuZUBungeeChat.ServerGroups.get(args[1]).ChannelBots.get(args[2]);
+                    if(bot == null) {
+                        sender.sendMessage(ChatColor.RED + "Botが存在しません");
+                        return;
+                    }
+                    sender.sendMessage(bot.channel.getClient().getSelfId().asString());
+                } else if(args[2].equalsIgnoreCase("ChannelChannelID")) {
+                    if (args.length <= 3) {
+                        sender.sendMessage(ChatColor.RED + "/" + getName() + " group " + args[1] + " ChannelToken [ChannelName]");
+                        return;
+                    }
+                    ChatLogBot bot = RyuZUBungeeChat.ServerGroups.get(args[1]).ChannelBots.get(args[2]);
+                    if(bot == null) {
+                        sender.sendMessage(ChatColor.RED + "Botが存在しません");
+                        return;
+                    }
+                    sender.sendMessage(bot.channel.getClient().getSelfId().asString());
                 }
             } else {
                 sender.sendMessage(ChatColor.RED + "グループが存在しません");

@@ -74,6 +74,8 @@ public class ChatLogBot {
             msg = "[" + "Discord" + "]" + "(" + map.get("ChannelName") + ")" + map.get("Discord") + " " + map.get("Message");
         }
 
+        msg = msg.replace("@" , "＠");
+
         channel.createMessage(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&' , msg))).block();
     }
 

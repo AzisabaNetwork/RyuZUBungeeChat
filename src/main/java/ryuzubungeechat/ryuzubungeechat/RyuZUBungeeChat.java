@@ -58,7 +58,6 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
                 Map<String , String> map = (Map<String, String>) jsonToMap(data);
                 List<String> system = Arrays.asList("Chat" , "Prefix" , "Suffix" , "SystemMessage");
                 if(system.contains(map.get("System"))) {
-                    if(map.containsKey("PlayerName") && PunishmentManager.get().isMuted(UUIDManager.get().getUUID(map.get("PlayerName")))) {return;}
                     map.put("SendServerName" , sendername);
                     List<ChatGroups> reciveservers = new ArrayList<>();
                     String finalSendername = sendername;
@@ -125,7 +124,7 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
         ServerGroups.values().stream().forEach(group -> {
             if(group.memberbot != null) group.memberbot.MessageEvent.dispose();
             if(group.adminbot != null) group.adminbot.MessageEvent.dispose();
-            group.ChannelBots.forEach(bot -> bot.MessageEvent.dispose());
+            group.ChannelBots.values().forEach(bot -> bot.MessageEvent.dispose());
         });
         ServerGroups.clear();
         Configuration config = null;
@@ -153,11 +152,11 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
                 Long adminchannelid = finalConfig.getLong(l + ".Bot.Admin.ChannelID");
                 String token = finalConfig.getString(l + ".Bot.Member.Token" , null);
                 Long channelid = finalConfig.getLong(l + ".Bot.Member.ChannelID");
-                List<ChannelBot> channelbots = new ArrayList<>();
+                HashMap<String , ChannelBot> channelbots = new HashMap<>();
                 for (String data : finalConfig.getSection(l + ".Bot.Channel").getKeys()) {
                     String channeltoken = finalConfig.getString(l + ".Bot.Channel." + data +  ".Token");
                     Long channelchannelid = finalConfig.getLong(l + ".Bot.Channel." + data +  ".ChannelID");
-                    channelbots.add(new ChannelBot(channeltoken , channelchannelid , l , data));
+                    channelbots.put(data , new ChannelBot(channeltoken , channelchannelid , l , data));
                 }
                 if(admintoken == null) {
                     ServerGroups.put(l , new ChatGroups(servers , format , channelformat , tellformat));

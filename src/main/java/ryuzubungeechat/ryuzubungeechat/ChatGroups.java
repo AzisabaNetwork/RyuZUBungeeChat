@@ -18,7 +18,7 @@ public class ChatGroups {
     public String tellformat;
     public ChatLogBot adminbot;
     public ChatLogBot memberbot;
-    public List<ChannelBot> ChannelBots = new ArrayList<>();
+    public HashMap<String , ChannelBot> ChannelBots = new HashMap<>();
 
     public ChatGroups(List<String> servers, String format , String channelformat , String tellformat) {
         this.servers = servers;
@@ -44,7 +44,7 @@ public class ChatGroups {
         this.memberbot = memberbot;
     }
 
-    public ChatGroups(List<String> servers, String format , String channelformat , String tellformat , ChatLogBot adminbot , ChatLogBot memberbot , List<ChannelBot> channelbots) {
+    public ChatGroups(List<String> servers, String format , String channelformat , String tellformat , ChatLogBot adminbot , ChatLogBot memberbot , HashMap<String , ChannelBot> channelbots) {
         this.servers = servers;
         this.format = format;
         this.channelformat = channelformat;
@@ -63,7 +63,7 @@ public class ChatGroups {
         }
         if(map.containsKey("ChannelName")) {
             adminbot.sendLogMessage(map , ChatLogBot.SendType.Channel);
-            ChannelBots.stream().filter(bot -> bot.channelname.equalsIgnoreCase(map.get("ChannelName"))).forEach(bot -> bot.sendLogMessage(map , ChatLogBot.SendType.Channel));
+            ChannelBots.values().stream().filter(bot -> bot.channelname.equalsIgnoreCase(map.get("ChannelName"))).forEach(bot -> bot.sendLogMessage(map , ChatLogBot.SendType.Channel));
             return;
         }
         adminbot.sendLogMessage(map , ChatLogBot.SendType.Global);
