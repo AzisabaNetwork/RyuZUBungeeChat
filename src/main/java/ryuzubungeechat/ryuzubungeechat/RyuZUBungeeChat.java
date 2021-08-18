@@ -6,8 +6,6 @@ import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.sun.org.apache.xml.internal.dtm.ref.sax2dtm.SAX2DTM2;
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import me.leoko.advancedban.manager.PunishmentManager;
-import me.leoko.advancedban.manager.UUIDManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
