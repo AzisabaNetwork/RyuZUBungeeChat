@@ -75,6 +75,7 @@ public class ChatLogBot {
         }
 
         msg = msg.replace("@" , "＠");
+        msg = msg.replace("__" , "\\__");
         msg = msg.replace("_" , "\\_");
 
         channel.createMessage(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&' , msg))).block();
