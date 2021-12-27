@@ -51,6 +51,8 @@ public final class RyuZUBungeeChat extends Plugin implements Listener {
                     if ( event.getSender() instanceof Server) {
                         Server receiver = (Server) event.getSender();
                         sendername = receiver.getInfo().getName();
+                    } else {
+                        return; // hacking attempt
                     }
                     ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
                     String data = in.readUTF();
